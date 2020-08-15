@@ -1,10 +1,12 @@
 package com.user.register.controller;
 
 import com.user.register.config.JwtTokenUtil;
+import com.user.register.exception.ExistingUserException;
+import com.user.register.exception.ResourceNotFoundException;
+import com.user.register.model.User;
 import com.user.register.model.JwtRequest;
 import com.user.register.model.JwtResponseWithUsername;
 import com.user.register.model.OtpRequest;
-import com.user.register.model.User;
 import com.user.register.services.UserService;
 import com.user.register.services.impl.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
+@CrossOrigin(origins = "https://topgrocerys.web.app")
 @RestController
 @RequestMapping("/userdetails")
-@CrossOrigin(origins = "https://topgrocerys.web.app")
 public class UserController {
 
     @Autowired
@@ -48,8 +52,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
+    public ResponseEntity<?> createAuthenticationToken(HttpServletResponse response,@RequestBody JwtRequest authenticationRequest) throws Exception {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         if(userService.login(authenticationRequest.getUsername(),authenticationRequest.getPassword())==null){
